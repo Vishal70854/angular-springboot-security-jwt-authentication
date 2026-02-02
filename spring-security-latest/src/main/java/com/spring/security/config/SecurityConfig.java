@@ -17,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration  // using this annotation we can define multiple beans for each method inside this class
 @EnableWebSecurity // the @EnableWebSecurity annotation is a powerful tool that enables developers to configure Spring Security for a web application.
@@ -59,11 +64,28 @@ public class SecurityConfig {
 //                                                    // converted UserInfoUserDetailsService to UserInfoUserDetails object as it expects UserInfoUserDetailsUserInfoUserDetails as return type
 //    }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+
     // authorization
     @Bean   // this bean if for SecurityFilterChain which is for authorization of users for
     // what endpoints we need to bypass and what endpoints need to be authenticated
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())   // disable csrf
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/welcome", "/new", "/authenticate").permitAll()   // permit all http requests with /products/welcome, /products/new, /products/authenticate

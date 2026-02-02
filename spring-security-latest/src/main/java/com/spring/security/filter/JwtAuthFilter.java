@@ -38,14 +38,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getServletPath();
-
-        // 🔥 VERY IMPORTANT
-        if (path.equals("/authenticate") || path.equals("/new") || path.equals("/welcome")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         // get the token from Authorization header which we passed in postman client
         String authHeader = request.getHeader("Authorization");
         String token = null;    // extract the token from authHeader
