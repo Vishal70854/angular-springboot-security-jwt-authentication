@@ -36,6 +36,12 @@ public class ProductController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @GetMapping("/")
+    public String welcome1(){
+        return "Welcome Vishal Kumar Singh";
+    }
+
+
     @GetMapping("/welcome")
     public String welcome(){
         return "Welcome !!! This endpoint is not secured";
